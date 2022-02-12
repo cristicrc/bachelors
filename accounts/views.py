@@ -98,7 +98,7 @@ def createDefaultBankingAccount():
         currency='RON',
         sold=0
     )
-    ibanLastDigitsCreation = len(defaultBankingAccount.customer_id)
+    ibanLastDigitsCreation = len(str(defaultBankingAccount.customer_id))
     defaultBankingAccount.iban[:-ibanLastDigitsCreation]
     defaultBankingAccount.iban += defaultBankingAccount.customer_id
     defaultBankingAccount.save()
