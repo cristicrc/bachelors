@@ -2,25 +2,9 @@ from django.db import models
 
 # Create your models here.
 
-class Customer(models.Model):
-    email = models.EmailField(null=True)
-    password = models.CharField(max_length=100, null=True)
-    CNP = models.CharField(max_length=13, null=True)
-    created_date = models.DateTimeField(auto_now_add=True, null=True)
-
-    def __str__(self):
-        return self.email
-    #USERNAME_FIELD = 'CNP'
-    #def __str__(self):
-    #    pass
-    #class Meta:
-    #    db_table = 'customers'
-
-
 class CustomerData(models.Model):
+    CNP = models.CharField(max_length=13, null=True)
     customer_id = models.IntegerField(null=True)
-    first_name = models.CharField(max_length=50, null=True)
-    last_name = models.CharField(max_length=50, null=True)
     id_series = models.CharField(max_length=2, null=True)
     id_number = models.CharField(max_length=6, null=True)
     birthday = models.DateTimeField(null=True)
@@ -62,3 +46,18 @@ class Transaction(models.Model):
     status = models.CharField(max_length=10, null=True)
     # class Meta:
     #     db_table = 'transactions'
+
+
+# class Customer(models.Model):
+#     email = models.EmailField(null=True)
+#     password = models.CharField(max_length=100, null=True)
+    
+#     created_date = models.DateTimeField(auto_now_add=True, null=True)
+
+#     def __str__(self):
+#         return self.email
+    # USERNAME_FIELD = 'CNP'
+    # def __str__(self):
+    #    pass
+    # class Meta:
+    #    db_table = 'customers'
