@@ -12,6 +12,10 @@ class CreateCustomerForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
+# class UpdateCustomerInformation(UserCreationForm):
+#     class Meta:
+#         model = Cu
+#         fields = ['username', 'email', 'first_name', 'last_name', 'id_series']
 
 '''
 class LoginCustomerForm(forms.Form):

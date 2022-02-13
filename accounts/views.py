@@ -34,6 +34,22 @@ def loginPage(request):
 
     return render(request, 'accounts/login.html', context)
 
+def updateCustomerInformation(request):
+    user = User.objects.filter(id=request.user.id)
+    customer = CustomerData.objects.filter(user_id=request.user.id)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        id_series = request.POST.get('id_series')
+        id_number = request.POST.get('id_number')
+        address = request.POST.get('address')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone_number = request.POST.get('phone_number')
+        user.update(username=username, email=email, first_name=first_name, last_name=last_name)
+        customer.update(id_series=id_series, id_number=id_number, address=address, phone_number=phone_number)
+    return render(request, 'accounts/updatecustomerinformation.html', {'user': user[0], 'customerData': customer[0]})
+
 def logoutUser(request):
     logout(request)
     return redirect('login')
@@ -85,6 +101,29 @@ def createDefaultCard():
         banking_account_id=''
     )
 
+def bankingAccount(request, bankingUrlId):
+    try:
+        bankingAccount = BankingAccount.objects.get(id=bankingUrlId)
+        cards = Card.objects.filter(banking_account=bankingUrlId)
+        transactions = Transaction.objects.filter(banking_account=bankingUrlId)
+        return render(request, 'accounts/bankingAccount.html', {'bankingAccount': bankingAccount, 'cards': cards, 'transactions': transactions})
+    except:
+        return render(request, 'accounts/bankingAccount.html', {'message': 'Banking account does not exist...'})
+
+def card(request, cardId):
+    try:
+        card = Card.objects.get(id=cardId)
+        return render(request, 'accounts/cardDetails.html', {'card': card})
+    except:
+        return render(request, 'accounts/cardDetails.html', {'message': 'Card does not exist...'})
+
+def transaction(request, transactionId):
+    try:
+        transaction = Transaction.objects.get(id=transactionId)
+        return render(request, 'accounts/transactionDetails.html', {'transaction': transaction})
+    except:
+        return render(request, 'accounts/transactionDetails.html', {'message': 'Transaction does not exist...'})
+
 @login_required(login_url='login')
 def myAccount(request):
     bankingAccounts = BankingAccount.objects.filter(user=request.user.id)
@@ -92,9 +131,6 @@ def myAccount(request):
     context = {'user': user, 'bankingAccounts': bankingAccounts}
     print(context)
     return render(request, 'accounts/myaccount.html', context)
-
-def updateCustomerInformation(request):
-    return render(request, 'accounts/updatecustomerinformation.html')
 
 # here are some old things. use them wisely
 '''

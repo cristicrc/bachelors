@@ -9,5 +9,8 @@ urlpatterns = [
     path('register/', views.registerPage, name='register'),
     path('createcustomerdata/', views.createCustomerDataPage, name='createcustomerdata'),
     path('myaccount/', views.myAccount, name='myaccount'),
+    path('bankingAccount/<int:bankingUrlId>', views.bankingAccount, name='bankingAccount'),
+    path('card/<int:cardId>', views.card, name='card'),
+    path('transaction/<int:transactionId>', views.transaction, name='transaction'),
     path('updatecustomerinformation/', views.updateCustomerInformation, name='updatecustomerinformation')
 ]

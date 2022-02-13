@@ -1,7 +1,7 @@
 {% load static %}
 <html>
 <head>
-  <title>My account</title>
+  <title>transaction</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
@@ -16,13 +16,15 @@
 <div class="container h-100">
 <div class="d-flex justify-content-center form_container">
 <form method="POST" action=""></form>
-    <label for="CNP">First Name: </label>
-    <input id="CNP" type="text" name="first_name" value={{user.first_name}}>
-    {% for bankingAccount in bankingAccounts %}
-      <a href="/bankingAccount/{{bankingAccount.id}}">{{bankingAccount.iban}}</a>
-    {% endfor %}
-    <label for="email">Last name: </label>
-    <input id="email" type="text" name="email" value={{user.last_name}}>
+    {% if transaction %}
+        {{transaction.receiver_iban}}
+        {{transaction.receiver_name}}
+        {{transaction.status}}
+        {{transaction.transaction_type}}
+        {{transaction.amonut}}
+    {% else %}
+        {{message}}
+    {% endif %}
 </form>
 </div>
 </div>

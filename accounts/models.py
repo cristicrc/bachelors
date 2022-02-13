@@ -53,7 +53,8 @@ class Transaction(models.Model):
     receiver_name = models.CharField(max_length=100, null=True)
     status = models.CharField(max_length=10, null=True)
 
-    card = models.ForeignKey(Card, null=True, on_delete = models.SET_NULL)
+    banking_account = models.ForeignKey(BankingAccount, on_delete = models.CASCADE, default=False)
+    card = models.ForeignKey(Card, null=True, blank=True, on_delete = models.SET_NULL)
 
     # class Meta:
     #     db_table = 'transactions'
