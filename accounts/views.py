@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 from .forms import CreateCustomerForm
 from .models import *
@@ -10,6 +12,7 @@ from .models import *
 import bcrypt
 from datetime import date
 
+#import settings.AUTH_USER_MODEL as User
 
 def home(request):
     return render(request, 'accounts/home.html')
@@ -34,9 +37,6 @@ def loginPage(request):
 def logoutUser(request):
     logout(request)
     return redirect('login')
-
-def myAccount():
-    pass
 
 def registerPage(request):
     form = CreateCustomerForm()
@@ -85,8 +85,13 @@ def createDefaultCard():
         banking_account_id=''
     )
 
+@login_required(login_url='login')
 def myAccount(request):
-    return render(request, 'accounts/myaccount.html')
+    bankingAccounts = BankingAccount.objects.filter(user=request.user.id)
+    user = User.objects.get(id=request.user.id)
+    context = {'user': user, 'bankingAccounts': bankingAccounts}
+    print(context)
+    return render(request, 'accounts/myaccount.html', context)
 
 def updateCustomerInformation(request):
     return render(request, 'accounts/updatecustomerinformation.html')

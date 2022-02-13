@@ -16,10 +16,10 @@
 <div class="container h-100">
 <div class="d-flex justify-content-center form_container">
 <form method="POST" action=""></form>
-    <label for="CNP">Your CNP: </label>
-    <input id="CNP" type="text" name="CNP" value="{{ current_CNP }}">
-    <label for="email">Your email: </label>
-    <input id="email" type="text" name="email" value="{{ current_email }}">
+    <label for="CNP">First Name: </label>
+    <input id="CNP" type="text" name="first_name" value={{user.first_name}}>
+    <label for="email">Last name: </label>
+    <input id="email" type="text" name="email" value={{user.last_name}}>
 </form>
 </div>
 </div>
