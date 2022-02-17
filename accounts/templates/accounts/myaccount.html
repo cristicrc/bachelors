@@ -12,19 +12,47 @@
 </head>
 <body>
  
-{% include "accounts/navigation.html" %} 
-<div class="container h-100">
-<div class="d-flex justify-content-center form_container">
-<form method="POST" action=""></form>
-    <label for="CNP">First Name: </label>
-    <input id="CNP" type="text" name="first_name" value={{user.first_name}}>
-    {% for bankingAccount in bankingAccounts %}
-      <a href="/bankingAccount/{{bankingAccount.id}}">{{bankingAccount.iban}}</a>
-    {% endfor %}
-    <label for="email">Last name: </label>
-    <input id="email" type="text" name="email" value={{user.last_name}}>
-</form>
-</div>
-</div>
+{% include "accounts/navigation.html" %}
+
+  <div class="col-sm-12">
+    <div class="card card-outline card-info">
+        <div class="card-header">
+          My account
+        </div>
+        <form method="POST" action="">
+            <div class="card-body">
+              <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td style="font-weight: bold;">First Name</td>
+                        <td>{{user.first_name}}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Last name</td>
+                        <td>{{user.last_name}}</td>
+                    </tr>
+                    {% for bankingAccount in bankingAccounts %}
+                      <tr>
+                        <td style="font-weight: bold;">Bank account</td>
+                        <td>
+                          <a href="/bankingAccount/{{bankingAccount.id}}">{{bankingAccount.iban}}</a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+              {% if bankingAccounts.count < 3 %}
+                <button type="button" class="btn btn-primary" onclick="createBankingAccountUrl()">Create banking account</button>
+              {% endif %}
+            </div>
+        </form>
+    </div>
+  </div>
 </body>
 </html>
+
+<script>
+  function createBankingAccountUrl() {
+      location.href = "/banking-account/create";
+  }
+</script>

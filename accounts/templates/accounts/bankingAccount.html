@@ -12,26 +12,102 @@
 </head>
 <body>
  
-{% include "accounts/navigation.html" %} 
-<div class="container h-100">
-<div class="d-flex justify-content-center form_container">
-<form method="POST" action=""></form>
-    {% if bankingAccount %}
-        {{bankingAccount.iban}}
-        {{bankingAccount.account_type}}
-        {{bankingAccount.currency}}
-        {{bankingAccount.sold}}
-        {% for card in cards %}
-            <a href="/card/{{card.id}}">{{card.card_number}}</a>
-        {% endfor %}
-        {% for transaction in transactions %}
-            <a href="/transaction/{{transaction.id}}">{{transaction.receiver_name}} {{transaction.receiver_iban}}</a>
-        {% endfor %}
-    {% else %}
-        {{message}}
-    {% endif %}
-</form>
-</div>
-</div>
+{% include "accounts/navigation.html" %}
+
+
+<div class="col-sm-12">
+    <div class="card card-outline card-info">
+        <div class="card-header">
+          Banking account
+        </div>
+        <form method="POST" action="">
+            <div class="card-body">
+              <table class="table table-bordered">
+                <tbody>
+                    {% if bankingAccount %}
+                        <tr>
+                            <td style="font-weight: bold;">Iban</td>
+                            <td>{{bankingAccount.iban}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Account type</td>
+                            <td>{{bankingAccount.account_type}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Currency</td>
+                            <td>{{bankingAccount.currency}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Sold</td>
+                            <td>{{bankingAccount.sold}}</td>
+                        </tr>
+                        {% for card in cards %}
+                            <tr>
+                                <td style="font-weight: bold;">Card</td>
+                                <td>
+                                    <a href="/card/{{card.id}}">{{card.card_number}}</a>
+                                    <a href="/card/delete/{{bankingAccount.id}}/{{card.id}}" style="text-decoration: none!important;">
+                                        <button type="button" class="btn btn-sm btn-danger">Delete</button>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        {{message}}
+                    {% endif %}
+                </tbody>
+              </table>
+              {% if bankingAccount %}
+                <button type="button" class="btn btn-primary" onclick="createCardUrl()">Create card</button>
+              {% endif %}
+            </div>
+        </form>
+    </div>
+  </div>
+  <br/>
+  <div class="col-sm-12">
+    <div class="card card-outline card-info">
+        <div class="card-header">
+          Transactions
+        </div>
+        <form method="POST" action="">
+            <div class="card-body">
+              <table class="table table-bordered">
+                <tbody>
+                    {% if bankingAccount %}
+                        {% for transaction in transactions %}
+                            <tr>
+                                <td style="font-weight: bold;">Transaction</td>
+                                <td>
+                                    <a href="/transaction/{{transaction.id}}">{{transaction.receiver_name}} {{transaction.receiver_iban}}</a>
+                                </td>
+                                <td>
+                                    {% if transaction.status == 'sent' %}
+                                        <button type="button" class="btn btn-sm btn-info">Sent</button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-sm btn-success">Received</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+              </table>
+              {% if bankingAccount %}
+                <button type="button" class="btn btn-primary" onclick="createTransactionUrl()">Create transaction</button>
+              {% endif %}
+            </div>
+        </form>
+    </div>
+  </div>
 </body>
 </html>
+
+<script>
+    function createCardUrl() {
+        location.href = "/card/create";
+    }
+    function createTransactionUrl() {
+        location.href = "/transaction/create";
+    }
+</script>

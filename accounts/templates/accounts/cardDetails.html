@@ -13,7 +13,7 @@
 <body>
  
 {% include "accounts/navigation.html" %} 
-<div class="container h-100">
+<!-- <div class="container h-100">
 <div class="d-flex justify-content-center form_container">
 <form method="POST" action=""></form>
     {% if card %}
@@ -27,6 +27,77 @@
     {% endif %}
 </form>
 </div>
+</div> -->
+
+<div class="d-flex justify-content-center form_container">
+<div class="padding">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <strong>Credit Card</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input class="form-control" id="name" type="text" placeholder="Enter your name" value="{{card.banking_account.user.first_name}} {{card.banking_account.user.last_name}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="ccnumber">Credit Card Number</label>
+                                <div class="input-group">
+                                    <input class="form-control" type="text" placeholder="0000 0000 0000 0000" autocomplete="email" value="{{card.card_number}}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-4">
+                            <label for="ccmonth">Month</label>
+                            <select class="form-control" id="ccmonth">
+                                <option>2</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label for="ccyear">Year</label>
+                            <select class="form-control" id="ccyear">
+                                <option>2026</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="cvv">CVV/CVC</label>
+                                <input class="form-control" id="cvv" type="text" placeholder="123" value="{{card.cvv}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-info" type="button">
+                        {% if card.card_status %}
+                            Inactiv
+                        {% else %}
+                            Activ
+                        {% endif %}
+                    </button>
+                    <button class="btn btn-sm btn-info" type="button"> 
+                        {% if card.card_type %}
+                            Fizic
+                        {% else %}
+                            Virtual
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+</div>
+
 </body>
 </html>

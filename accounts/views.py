@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+import random
 
 from .forms import CreateCustomerForm
 from .models import *
@@ -64,6 +65,80 @@ def registerPage(request):
     context = {'form':form}
     return render(request, 'accounts/register.html', context)
 
+def cardCreate(request):
+    if request.method == 'POST':
+        card_number = request.POST.get('card_number')
+        expiration_date = request.POST.get('expiration_date')
+        cvv = request.POST.get('cvv')
+        card_type = request.POST.get('card_type')
+        card_status = request.POST.get('card_status')
+        pin = request.POST.get('pin')
+        banking_account_id = request.POST.get('banking_account_id')
+        banking_account = BankingAccount.objects.get(id=banking_account_id)
+        card = Card(card_number=card_number, expiration_date=expiration_date, cvv=cvv, card_type=card_type, card_status=card_status, pin=pin, banking_account=banking_account)
+        card.save()
+        return redirect('/bankingAccount/' + str(banking_account_id))
+    bankingAccounts = BankingAccount.objects.filter(user=request.user.id)
+    context = {'bankingAccounts': bankingAccounts, 'cardNumber': generateCardNumber(), 'cvvNumber': generateCvvCode()}
+    return render(request, 'accounts/cardCreate.html', context)
+
+def createTransaction(request):
+    bankingAccounts = BankingAccount.objects.filter(user=request.user.id)
+    if request.method == 'POST':
+        requestAmount = request.POST.get('amount')
+        receiver_iban = request.POST.get('receiver_iban')
+        receiver_name = request.POST.get('receiver_name')
+        banking_account_id = request.POST.get('banking_account_id')
+        sender_banking_account = BankingAccount.objects.filter(id=banking_account_id)
+        receiver_banking_account = BankingAccount.objects.filter(iban=receiver_iban)
+        
+        if sender_banking_account:
+            if int(sender_banking_account[0].sold) - int(requestAmount) < 0:
+                messages.info(request, 'Not enough money...')
+                return redirect('/transaction/create')
+            sender_banking_account.update(sold=int(sender_banking_account[0].sold) - int(requestAmount))
+        if receiver_iban:
+            if receiver_banking_account:
+                receiver_banking_account.update(sold=int(receiver_banking_account[0].sold) + int(requestAmount))
+                transactionReceived = Transaction(status='received', transaction_type='transfer', amount=requestAmount, receiver_iban=receiver_iban, receiver_name=receiver_name, banking_account=BankingAccount.objects.get(iban=receiver_iban))
+                transactionReceived.save()
+
+        transactionSent = Transaction(status='sent', transaction_type='transfer', amount=requestAmount, receiver_iban=receiver_iban, receiver_name=receiver_name, banking_account=BankingAccount.objects.get(id=banking_account_id))
+        transactionSent.save()
+        return redirect('/bankingAccount/' + str(banking_account_id))
+    return render(request, 'accounts/createTransaction.html', {'bankingAccounts': bankingAccounts})
+
+def deleteCard(request, cardId=None, bankingAccountId=None):
+    card = Card.objects.get(id=cardId)
+    card.delete()
+    return redirect('/bankingAccount/' + str(bankingAccountId))
+
+def generateCardNumber():
+	n = random.random()
+	m = pow(10, 16)
+	n *= m
+	n = int(n)
+	n = str(n)
+	return n
+
+def generateCvvCode():
+    n = random.random()
+    n *= 1000
+    if int(n) < 100:
+        n *= 10
+    n = int(n)
+    return str(n)
+
+def bankingAccountCreate(request):
+    if request.method == 'POST':
+        iban = request.POST.get('iban')
+        account_type = request.POST.get('account_type')
+        currency = request.POST.get('currency')
+        user = User.objects.get(id=request.user.id)
+        bankingAccount = BankingAccount(iban=iban, account_type=account_type, currency=currency, sold=0, user=user)
+        bankingAccount.save()
+        return redirect('/myaccount')
+    return render(request, 'accounts/bankingAccountCreate.html', {'iban': 'RO13RZBR0000060007134800'}) # generate iban
 
 def createCustomerDataPage(request):
     form = CreateCustomerDataForm(request)
@@ -96,11 +171,6 @@ def createDefaultBankingAccount():
     defaultBankingAccount.iban += defaultBankingAccount.customer_id
     defaultBankingAccount.save()
 
-def createDefaultCard():
-    defaultCard = Card(
-        banking_account_id=''
-    )
-
 def bankingAccount(request, bankingUrlId):
     try:
         bankingAccount = BankingAccount.objects.get(id=bankingUrlId)
@@ -129,7 +199,6 @@ def myAccount(request):
     bankingAccounts = BankingAccount.objects.filter(user=request.user.id)
     user = User.objects.get(id=request.user.id)
     context = {'user': user, 'bankingAccounts': bankingAccounts}
-    print(context)
     return render(request, 'accounts/myaccount.html', context)
 
 # here are some old things. use them wisely
