@@ -49,7 +49,11 @@ def updateCustomerInformation(request):
         phone_number = request.POST.get('phone_number')
         user.update(username=username, email=email, first_name=first_name, last_name=last_name)
         customer.update(id_series=id_series, id_number=id_number, address=address, phone_number=phone_number)
-    return render(request, 'accounts/updatecustomerinformation.html', {'user': user[0], 'customerData': customer[0]})
+        return redirect('/myaccount/')
+    try:
+        return render(request, 'accounts/updatecustomerinformation.html', {'user': user[0], 'customerData': customer[0]})
+    except IndexError:
+        return render(request, 'accounts/updatecustomerinformation.html', {'user': user[0], 'customerData': customer})
 
 def logoutUser(request):
     logout(request)
@@ -61,7 +65,7 @@ def registerPage(request):
         form = CreateCustomerForm(request.POST)
         if form.is_valid():
             form.save()
-            #return redirect('login')
+        return redirect('login')
     context = {'form':form}
     return render(request, 'accounts/register.html', context)
 
@@ -137,7 +141,7 @@ def bankingAccountCreate(request):
         user = User.objects.get(id=request.user.id)
         bankingAccount = BankingAccount(iban=iban, account_type=account_type, currency=currency, sold=0, user=user)
         bankingAccount.save()
-        return redirect('/myaccount')
+        return redirect('/myaccount/')
     return render(request, 'accounts/bankingAccountCreate.html', {'iban': 'RO13RZBR0000060007134800'}) # generate iban
 
 def createCustomerDataPage(request):
