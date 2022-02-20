@@ -1,7 +1,7 @@
 {% load static %}
 <html>   
 <head>
-	<title>Create card</title>
+	<title>Create bank account</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
@@ -21,7 +21,7 @@
             			{% csrf_token %}
 						<div class="input-group mb-2">
 							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-user"></i></span>
+								<span class="input-group-text" style="width: 40px; text-align: center;"><i class="fas fa-money-check"></i></span>
 							</div>
 
 							<input type="text" name="iban" placeholder="Iban..." class="form-control" value="{{iban}}"/>
@@ -29,7 +29,7 @@
 
                         <div class="input-group mb-2">
 							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
+								<span class="input-group-text" style="width: 40px; text-align: center;"><i class="fas fa-money-check"></i></span>
 							</div>
 								<select name="account_type" class="form-control">
                                     <option value="cont_curent">Curent</option>
@@ -39,7 +39,7 @@
 
                         <div class="input-group mb-2">
 							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
+								<span class="input-group-text" style="width: 40px; text-align: center;"><i class="fas fa-money-check"></i></span>
 							</div>
 								<select name="currency" class="form-control">
                                     <option value="ron">RON</option>

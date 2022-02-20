@@ -35,6 +35,7 @@ def loginPage(request):
 
     return render(request, 'accounts/login.html', context)
 
+@login_required(login_url='login')
 def updateCustomerInformation(request):
     user = User.objects.filter(id=request.user.id)
     customer = CustomerData.objects.filter(user_id=request.user.id)
@@ -69,6 +70,7 @@ def registerPage(request):
     context = {'form':form}
     return render(request, 'accounts/register.html', context)
 
+@login_required(login_url='login')
 def cardCreate(request):
     if request.method == 'POST':
         card_number = request.POST.get('card_number')
@@ -86,6 +88,7 @@ def cardCreate(request):
     context = {'bankingAccounts': bankingAccounts, 'cardNumber': generateCardNumber(), 'cvvNumber': generateCvvCode()}
     return render(request, 'accounts/cardCreate.html', context)
 
+@login_required(login_url='login')
 def createTransaction(request):
     bankingAccounts = BankingAccount.objects.filter(user=request.user.id)
     if request.method == 'POST':
@@ -112,27 +115,31 @@ def createTransaction(request):
         return redirect('/bankingAccount/' + str(banking_account_id))
     return render(request, 'accounts/createTransaction.html', {'bankingAccounts': bankingAccounts})
 
+@login_required(login_url='login')
 def deleteCard(request, cardId=None, bankingAccountId=None):
     card = Card.objects.get(id=cardId)
     card.delete()
     return redirect('/bankingAccount/' + str(bankingAccountId))
 
 def generateCardNumber():
-	n = random.random()
-	m = pow(10, 16)
-	n *= m
-	n = int(n)
-	n = str(n)
-	return n
+    n = random.random()
+    m = pow(10, 16)
+    n *= m
+    n = int(n)
+    while n < 999999999999999:
+        n *= 10
+    n = str(n)
+    return n
 
 def generateCvvCode():
     n = random.random()
     n *= 1000
-    if int(n) < 100:
+    while int(n) < 100:
         n *= 10
     n = int(n)
     return str(n)
 
+@login_required(login_url='login')
 def bankingAccountCreate(request):
     if request.method == 'POST':
         iban = request.POST.get('iban')
@@ -142,7 +149,7 @@ def bankingAccountCreate(request):
         bankingAccount = BankingAccount(iban=iban, account_type=account_type, currency=currency, sold=0, user=user)
         bankingAccount.save()
         return redirect('/myaccount/')
-    return render(request, 'accounts/bankingAccountCreate.html', {'iban': 'RO13RZBR0000060007134800'}) # generate iban
+    return render(request, 'accounts/bankingAccountCreate.html', {'iban': generateIban})
 
 def createCustomerDataPage(request):
     form = CreateCustomerDataForm(request)
@@ -162,19 +169,18 @@ def createCustomerDataPage(request):
             ).save()
     return render(request, 'accounts/createcustomerdata.html', context)
 
-def createDefaultBankingAccount():
-    defaultBankingAccount =  BankingAccount(
-        account_type='Current Account',
-        customer_id='15',
-        iban='RO97MYBNK000000000000000',
-        currency='RON',
-        sold=0
-    )
-    ibanLastDigitsCreation = len(str(defaultBankingAccount.customer_id))
-    defaultBankingAccount.iban[:-ibanLastDigitsCreation]
-    defaultBankingAccount.iban += defaultBankingAccount.customer_id
-    defaultBankingAccount.save()
+def generateIban():
+    iban='MB97MYBNK000000000000000'
+    randomLastDigits = random.random()
+    randomLastDigits *= 1000000000000000
+    randomLastDigits = int(randomLastDigits)
+    while(randomLastDigits < 99999999999999):
+        randomLastDigits*=10
+    iban = iban[:-15]
+    iban += str(randomLastDigits)
+    return iban
 
+@login_required(login_url='login')
 def bankingAccount(request, bankingUrlId):
     try:
         bankingAccount = BankingAccount.objects.get(id=bankingUrlId)
@@ -184,6 +190,7 @@ def bankingAccount(request, bankingUrlId):
     except:
         return render(request, 'accounts/bankingAccount.html', {'message': 'Banking account does not exist...'})
 
+@login_required(login_url='login')
 def card(request, cardId):
     try:
         card = Card.objects.get(id=cardId)
@@ -191,6 +198,7 @@ def card(request, cardId):
     except:
         return render(request, 'accounts/cardDetails.html', {'message': 'Card does not exist...'})
 
+@login_required(login_url='login')
 def transaction(request, transactionId):
     try:
         transaction = Transaction.objects.get(id=transactionId)

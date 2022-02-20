@@ -31,7 +31,13 @@
                         </tr>
                         <tr>
                             <td style="font-weight: bold;">Account type</td>
-                            <td>{{bankingAccount.account_type}}</td>
+                            <td>
+                                {% if bankingAccount.account_type == "cont_curent" %}
+                                Cont curent
+                                {% else %}
+                                Cont de economii
+                                {% endif %}
+                            </td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold;">Currency</td>
@@ -79,7 +85,7 @@
                             <tr>
                                 <td style="font-weight: bold;">Transaction</td>
                                 <td>
-                                    <a href="#">{{transaction.receiver_name}} {{transaction.receiver_iban}}</a>
+                                    <a href="#">{{transaction.receiver_iban}} {{transaction.amount}}</a>
                                 </td>
                                 <td>
                                     {% if transaction.status == 'sent' %}
